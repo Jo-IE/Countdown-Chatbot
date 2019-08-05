@@ -4,6 +4,8 @@ const request = require('request');
 const MessageModel = require('../models/messages');
 const User = require('../models/users');
 var state = {message:"", count:0};
+
+const https = require('https');
 require('dotenv').config();
 
 
@@ -36,6 +38,7 @@ const receivedMessage = function(event){
     const messageText = message.text;
     const messageAttachments = message.attachments;
     const greetingConfidence = message.nlp && message.nlp.entities && message.nlp.entities.greetings && message.nlp.entities.greetings[0].confidence;
+    var response;
 
     if(typeof messageText !== 'undefined'){
         
@@ -44,7 +47,7 @@ const receivedMessage = function(event){
         const dateRegex = /\d{4}-\d{2}-\d{2}/;
         const positiveRegex = /^ye(ah){0,1}(s){0,1}(up)?$/;
         const negativeRegex = /^n(ah)?(ope)?(o)?$/;
-        var response;
+       
 
         // message is the first message by user and it is a greeting
         if(state.count===0 && ((typeof greetingConfidence !== 'undefined') && greetingConfidence > 0.9)){
@@ -118,20 +121,34 @@ const receivedMessage = function(event){
         
     }
     else if(typeof messageAttachments !== 'undefined'){
+        
         if(message.attachments[0].payload.coordinates){
             // message is a location coordinate
             var lat = message.attachments[0].payload.coordinates.lat;
             var long = message.attachments[0].payload.coordinates.long;
-            fetch('https://places.cit.api.here.com/places/v1/discover/explore?at='+lat+','+long+'&cat=eat-drink&app_id='+process.env.APP_ID+'&app_code='+process.env.APP_CODE)
-            .then(function(res){
-                return res.json();
-            })
-            .then(function(json){
-                console.log(json)
-                  sendTextMessage(senderID, json.results)
-            })
+            var url = 'https://places.cit.api.here.com/places/v1/discover/explore?at='+lat+','+long+'&cat=eat-drink&app_id='+process.env.APP_ID+'&app_code='+process.env.APP_CODE;
+          
+            
+            return https.get(url, (resp) => {
+                let data = '';
+              
+                // A chunk of data has been recieved.
+                resp.on('data', (chunk) => {
+                  data += chunk;
+                });
+              
+                // The whole response has been received. Print out the result.
+                resp.on('end', () => {
+                    response = data.results.items.map((item) => {
+                        return item.title + " " + "(" + item.openingHours.text + ")" + "\n"});
+                        sendTextMessage(senderID, response);
+                       
+                });
+              
+              }).on("error", (err) => {
+                console.log("Error: " + err.message);
+              });
         }
-        return json.results;
         
     }
 

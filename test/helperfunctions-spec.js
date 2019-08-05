@@ -134,6 +134,31 @@ const {handlePost, receivedMessage, getCountDown, sendTextMessage, sendAPI} = re
                 var results = receivedMessage(event);
                 expect(results).to.equal("Sorry, I couldn't understand you")
         })
+        it("should respond with an object when a user gives their location", function(){
+            var event = {
+                message:{
+                    id: "01228",
+                    attachments:[{
+                        payload:{
+                            coordinates:{
+                                lat: 52.5159,
+                                long: 13.3777
+                            }
+                        }
+                    }]
+                },
+                sender:{
+                    id: "21331"
+                },
+                recipient:{
+                    id: "3132"
+                },
+                timestamp:"05:15"
+            }
+                var results = receivedMessage(event);
+                expect(results).to.be.a('object');
+                console.log(results)
+        })
     })
 
 
