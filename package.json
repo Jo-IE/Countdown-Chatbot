@@ -1,0 +1,28 @@
+{
+  "name": "messengerbot",
+  "version": "0.0.1",
+  "description": "'A simple messenger bot that calculates days till user's next birthday'",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --timeout 10000"
+  },
+  "keywords": [
+    "bot",
+    "facebook",
+    "messenger",
+    "birthday"
+  ],
+  "author": "Jo IE",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.6.7",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0"
+  }
+}
