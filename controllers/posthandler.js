@@ -35,7 +35,7 @@ const receivedMessage = function(event){
     const messageID = message.mid;
     const messageText = message.text;
     const messageAttachments = message.attachments;
-    const greetingConfidence = message.nlp && message.nlp.entities && message.nlp.entities.greetings && message.nlp.entities.greetings[0];
+    const greetingConfidence = message.nlp && message.nlp.entities && message.nlp.entities.greetings && message.nlp.entities.greetings[0].confidence;
 
     if(typeof messageText !== 'undefined'){
         
@@ -47,7 +47,7 @@ const receivedMessage = function(event){
         var response;
 
         // message is the first message by user and it is a greeting
-        if(state.count===0 || ((typeof greetingConfidence !== 'undefined') && greetingConfidence > 0.9)){
+        if(state.count===0 && ((typeof greetingConfidence !== 'undefined') && greetingConfidence > 0.9)){
             response = 'What is your name?';
             sendTextMessage(senderID, response);
             state.count = 1;
@@ -80,7 +80,11 @@ const receivedMessage = function(event){
         else if(state.count === 3 && positiveRegex.test(messageText)){
             User.findOne({senderid:senderID}, function(err,user){
                 const countDown = getCountDown(user.birthday);
-                if(countDown > 10){
+                if(countDown < 1){
+                response = `It's your birthday! Happy Birthday!`
+                sendTextMessage(senderID, response)
+                }
+                else if(countDown > 10){
                 response = `There are ${countDown} days left till your next birthday!`
                 sendTextMessage(senderID, response)
                 }else{
@@ -95,13 +99,14 @@ const receivedMessage = function(event){
         else if(
             (state.count===3 && negativeRegex.test(messageText)) || 
             (state.count===4 && negativeRegex.test(messageText)) ){
-
-            response='Goodbye'
+            var wave = String.fromCodePoint(128075);
+            response='Goodbye ' + wave;
             sendTextMessage(senderID, response);
             User.findOneAndDelete({senderid:senderID}, function(err, user){
                 if(err){console.log(err);}
             })
             state.count=0;
+            state.message = ''
         } 
         //none of the above applies
         else {

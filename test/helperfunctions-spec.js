@@ -11,9 +11,9 @@ const {handlePost, receivedMessage, getCountDown, sendTextMessage, sendAPI} = re
                     id: "01222",
                     nlp: {
                         entities:{
-                            "greetings":[
+                            greetings:[
                                 {
-                                    "confidence": 0.92
+                                    confidence: 0.92
                                 }
                             ]
                         }
@@ -78,8 +78,9 @@ const {handlePost, receivedMessage, getCountDown, sendTextMessage, sendAPI} = re
                 },
                 timestamp:"05:15"
             }
+                var wave = String.fromCodePoint(128075);
                 var results = receivedMessage(event);
-                expect(results).to.equal("Goodbye")
+                expect(results).to.equal("Goodbye " + wave);
         })
         it("restart the process after Goodbye", function(){
             var event = {
