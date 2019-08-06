@@ -45,8 +45,8 @@ const receivedMessage = function(event){
        //detect keywords
         const nameRegex = /name/;
         const dateRegex = /\d{4}-\d{2}-\d{2}/;
-        const positiveRegex = /^ye(ah){0,1}(s){0,1}(up)?$/;
-        const negativeRegex = /^n(ah)?(ope)?(o)?$/;
+        const positiveRegex = /^y((ah)|(es)|(eah)|(up)){0,1}$/;
+        const negativeRegex = /^n((ah)|o|(ope)|(aw)|(ay)){0,1}$/;
        
 
         // message is the first message by user and it is a greeting
@@ -92,7 +92,7 @@ const receivedMessage = function(event){
                 sendTextMessage(senderID, response)
                 }else{
                     //user's birthday is coming up soon, ask for location to give restaurant suggestions
-                    response = `There are ${countDown} days left till your next birthday! May I have your location to suggest a good place to party?`
+                    response = `There are only ${countDown} days left till your next birthday! May I have your location to suggest a good place to party?`
                     sendTextMessage(senderID, response)
                 }
             })
@@ -119,7 +119,7 @@ const receivedMessage = function(event){
         return response;
        
         
-    }
+    } //user has sent their location
     else if(typeof messageAttachments !== 'undefined'){
         
         if(message.attachments[0].payload.coordinates){
@@ -128,6 +128,7 @@ const receivedMessage = function(event){
             var long = message.attachments[0].payload.coordinates.long;
             var url = 'https://places.cit.api.here.com/places/v1/discover/explore?at='+lat+','+long+'&cat=eat-drink&app_id='+process.env.APP_ID+'&app_code='+process.env.APP_CODE;
           
+            
             
             return https.get(url, (resp) => {
                 let data = '';
@@ -141,7 +142,7 @@ const receivedMessage = function(event){
                 resp.on('end', () => {
                     response = data.results.items.map((item) => {
                         return item.title + " " + "(" + item.openingHours.text + ")" + "\n"});
-                        sendTextMessage(senderID, response);
+                        sendTextMessage(senderID, "Here are some places to hang out with friends on your special day:" + "\n"+ response);
                        
                 });
               
