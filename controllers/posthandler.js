@@ -96,7 +96,8 @@ const receivedMessage = function(event){
                     sendTextMessage(senderID, response)
                 }
             })
-            state.count = 4;
+            state.count = 0;
+            state.message = ''
         } 
         // user has given a birthdate and refused to receive a countdown.
         else if(
@@ -128,7 +129,15 @@ const receivedMessage = function(event){
             var long = message.attachments[0].payload.coordinates.long;
             var url = 'https://places.cit.api.here.com/places/v1/discover/explore?at='+lat+','+long+'&cat=eat-drink&app_id='+process.env.APP_ID+'&app_code='+process.env.APP_CODE;
           
-            
+            /* return axios.get(url)
+            .then(function(data){
+               response = data.results.items.map((item) => {
+                    return item.title + " " + "(" + item.openingHours.text + ")" + "\n"});
+                    sendTextMessage(senderID, response)
+            })
+            .catch((err) => {
+                console.log(err);
+            })*/
             
             return https.get(url, (resp) => {
                 let data = '';

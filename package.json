@@ -4,6 +4,7 @@
   "description": "'A simple messenger bot that calculates days till user's next birthday'",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "mocha --timeout 10000"
   },
   "keywords": [
@@ -23,6 +24,7 @@
     "request": "^2.88.0"
   },
   "devDependencies": {
+    "mocha": "^6.2.0",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0"
   }
