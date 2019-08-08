@@ -6,7 +6,7 @@ const User = require('../models/users');
 var state = {message:"", count:0};
 
 const https = require('https');
-require('dotenv').config();
+
 
 
 const getCountDown = function(datestring){
@@ -129,7 +129,12 @@ const receivedMessage = function(event){
             var long = message.attachments[0].payload.coordinates.long;
             var url = 'https://places.cit.api.here.com/places/v1/discover/explore?at='+lat+','+long+'&cat=eat-drink&app_id='+process.env.APP_ID+'&app_code='+process.env.APP_CODE;
           
-            /* return axios.get(url)
+            
+            
+            return https.get(url, (resp) => {
+                let data = '';
+              
+                /* return axios.get(url)
             .then(function(data){
                response = data.results.items.map((item) => {
                     return item.title + " " + "(" + item.openingHours.text + ")" + "\n"});
@@ -138,10 +143,6 @@ const receivedMessage = function(event){
             .catch((err) => {
                 console.log(err);
             })*/
-            
-            return https.get(url, (resp) => {
-                let data = '';
-              
                 // A chunk of data has been recieved.
                 resp.on('data', (chunk) => {
                   data += chunk;
